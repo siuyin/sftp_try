@@ -1,0 +1,9 @@
+# rename to config.secret and edit accorindly.
+export HOST=192.168.1.100
+export PORT=22
+export USER=osmc
+export PASSWD=yourPassWd
+export KEYFILE=/home/siuyin/.ssh/id_rsa
+
+export WALK_DIR=".ssh"
+export GET_FILE="junk.md"
