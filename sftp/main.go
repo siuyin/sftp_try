@@ -41,14 +41,23 @@ func main() {
 		fmt.Printf("%v%v: %v %s\n", v.Name(), dirFlag(v.IsDir()), v.Size(), v.ModTime())
 	}
 
-	// open file and copy to stdout
+	// open file for reading
 	f, err := sftp.Open(os.Getenv("GET_FILE"))
 	if err != nil {
 		log.Fatalf("unable to open file: %v", err)
 	}
 	defer f.Close()
 
-	_, err = io.Copy(os.Stdout, f)
+	// create output file
+	of, err := os.Create(os.Getenv("GET_FILE"))
+	if err != nil {
+		log.Fatalf("unable to create file: %v", err)
+	}
+	defer of.Close()
+
+	// create a tee reader
+	tee := io.TeeReader(f, os.Stdout)
+	_, err = io.Copy(of, tee)
 	if err != nil {
 		log.Printf("copy error: %v", err)
 	}
