@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-// GetClient reads parameter from the environment and returns
+// GetClient read parameters from the environment and returns
 // an ssh client connection.
 func GetClient() (*ssh.Client, error) {
 	// A public key may be used to authenticate against the remote
