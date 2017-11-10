@@ -2,9 +2,11 @@ package sftp_try
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -46,4 +48,27 @@ func GetClient() (*ssh.Client, error) {
 		return nil, fmt.Errorf("Failed to dial: %v", err)
 	}
 	return client, nil
+}
+
+// Get retrieves a file with sftp.
+func Get(sc *sftp.Client, fn string) error {
+	// open file for reading
+	f, err := sc.Open(fn)
+	if err != nil {
+		return fmt.Errorf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	// create output file
+	of, err := os.Create(fn)
+	if err != nil {
+		return fmt.Errorf("unable to create file: %v", err)
+	}
+	defer of.Close()
+
+	_, err = io.Copy(of, f)
+	if err != nil {
+		return fmt.Errorf("copy error: %v", err)
+	}
+	return nil
 }

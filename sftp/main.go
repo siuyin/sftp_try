@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"siuyin/sftp_try"
@@ -41,26 +40,10 @@ func main() {
 		fmt.Printf("%v%v: %v %s\n", v.Name(), dirFlag(v.IsDir()), v.Size(), v.ModTime())
 	}
 
-	// open file for reading
-	f, err := sftp.Open(os.Getenv("GET_FILE"))
-	if err != nil {
-		log.Fatalf("unable to open file: %v", err)
-	}
-	defer f.Close()
-
-	// create output file
-	of, err := os.Create(os.Getenv("GET_FILE"))
-	if err != nil {
-		log.Fatalf("unable to create file: %v", err)
-	}
-	defer of.Close()
-
-	// create a tee reader
-	tee := io.TeeReader(f, os.Stdout)
-	_, err = io.Copy(of, tee)
-	if err != nil {
+	if err := sftp_try.Get(sftp, os.Getenv("GET_FILE")); err != nil {
 		log.Printf("copy error: %v", err)
 	}
+
 }
 
 func dirFlag(isDir bool) string {
